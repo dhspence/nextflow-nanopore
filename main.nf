@@ -45,7 +45,7 @@ process guppy_basecaller_gpu {
     
     script:
         """
-        guppy_basecaller -i $fast5_path --bam_out -s unaligned_bam -c -c ${task.guppy_config} --num_callers ${task.cpus} -x cuda:all:100%
+        guppy_basecaller -i $fast5_path --bam_out -s unaligned_bam -c ${task.guppy_config} --num_callers ${task.cpus} -x cuda:all:100%
         
         mkdir basecall
         mkdir basecall/summary && mv unaligned_bam/sequencing_* basecall/summary
