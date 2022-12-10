@@ -4,6 +4,7 @@
 
 // Write process directive (https://www.nextflow.io/docs/latest/dsl2.html#process)
 process guppy_basecaller {
+    guppy_config = '/opt/ont/guppy/data/dna_r10.4.1_e8.2_400bps_modbases_5mc_cg_sup.cfg'
     publishDir "${params.outdir}", mode:'copy', pattern: 'basecall/**' // "**" means include subdirecteries in glob pattern"
     container  "dhspence/docker-guppy"
     cpus 12
@@ -18,7 +19,7 @@ process guppy_basecaller {
     
     script:
         """
-        guppy_basecaller -i $fast5_path --bam_out -s unaligned_bam -c /opt/ont/guppy/data/dna_r10.4.1_e8.2_260bps_modbases_5mc_cg_sup.cfg --num_callers ${task.cpus}
+        guppy_basecaller -i $fast5_path --bam_out -s unaligned_bam -c ${task.guppy_config} --num_callers ${task.cpus}
         
         mkdir basecall
         mkdir basecall/summary && mv unaligned_bam/sequencing_* basecall/summary
@@ -29,6 +30,7 @@ process guppy_basecaller {
 }
 
 process guppy_basecaller_gpu {
+    guppy_config = '/opt/ont/guppy/data/dna_r10.4.1_e8.2_400bps_modbases_5mc_cg_sup.cfg'
     publishDir "${params.outdir}", mode:'copy', pattern: 'basecall/**'
     container  "dhspence/docker-gguppy"
     cpus 2
@@ -43,7 +45,7 @@ process guppy_basecaller_gpu {
     
     script:
         """
-        guppy_basecaller -i $fast5_path --bam_out -s unaligned_bam -c /opt/ont/guppy/data/dna_r10.4.1_e8.2_260bps_modbases_5mc_cg_sup.cfg --num_callers ${task.cpus} -x cuda:all:100%
+        guppy_basecaller -i $fast5_path --bam_out -s unaligned_bam -c -c ${task.guppy_config} --num_callers ${task.cpus} -x cuda:all:100%
         
         mkdir basecall
         mkdir basecall/summary && mv unaligned_bam/sequencing_* basecall/summary
